@@ -72,6 +72,10 @@ workflow {
 
     salsa2_scaffolding(channel.fromPath(params.REF).first(), fasta_faidx_index.out.first(), sort_bed.out, channel.of(3,5,10))
 
+    index_scaffolded_fasta(salsa2_scaffolding.out)
+
+    make_chromosome_sizes(index_scaffolded_fasta.out) 
+
 
 }
 
@@ -126,6 +130,7 @@ process filter_R1 {
 
     input:
     tuple val(sample_id), path(input)
+
     // path FILTER
 
     
@@ -133,6 +138,8 @@ process filter_R1 {
     tuple val(sample_id), path("filtered/*.bam")
     // stdout emit: verbiage
 
+    script:
+    def oo = 10
     """
     echo ${input.getSimpleName()}
     mkdir filtered
@@ -400,7 +407,7 @@ process salsa2_scaffolding {
         
     output:
     // path("scaffolds_i"+ iteration + "/*")
-    path("*")
+    tuple path("*"), val("scaffolds_i$iteration")
 
     """
     mkdir scaffolds_i${iteration}
@@ -414,5 +421,38 @@ process salsa2_scaffolding {
 ////////////////
 // steps for creating .hic file
 
+process index_scaffolded_fasta {
+    
+    module 'mugqic/samtools/1.14'
 
+    input:
+    tuple path(index), val(iteration)
+
+    output:
+    tuple path("*/*.fai"), val(iteration)
+    
+    """
+    FASTA=`find -L ./ -name "*FINAL.fasta"`
+    samtools faidx \$FASTA -o \$FASTA.fai
+    """
+}
+
+process make_chromosome_sizes {
+    
+    module 'mugqic/samtools/1.14'
+
+    input:
+    tuple path(index), val(iteration)
+
+    output:
+    tuple path("chromosome_sizes.tsv"), val(iteration)
+    stdout
+
+    """
+    echo $index $iteration
+    cut -f 1,2 $index | head -n 500 > chromosome_sizes.tsv
+
+
+    """
+}
 
