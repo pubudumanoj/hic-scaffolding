@@ -433,7 +433,7 @@ process index_scaffolded_fasta {
     
     """
     FASTA=`find -L ./ -name "*FINAL.fasta"`
-    samtools faidx \$FASTA -o \$FASTA.fai
+    samtools faidx $iteration/scaffolds_FINAL.fasta -o scaffolds_FINAL.fasta.fai
     """
 }
 
