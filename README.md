@@ -27,12 +27,12 @@ Currently this pipeline only supports for paired end fastq files and you must ha
 
 _e.g_ <br />
 **sample 1** <br />
-HiC05-01_Afraterculus_RAG1429A1-1_S1_L001_R1_001.fastq.gz
-HiC05-01_Afraterculus_RAG1429A1-1_S1_L001_R2_001.fastq.gz
+HiC_Afraterculus_L001_R1_001.fastq.gz  <br />
+HiC_Afraterculus_L001_R2_001.fastq.gz
 
 **sample 2** <br />
-HiC05-01_Afraterculus_RAG1429A1-1_S1_L002_R1_001.fastq.gz
-HiC05-01_Afraterculus_RAG1429A1-1_S1_L002_R2_001.fastq.gz
+HiC_Afraterculus_L002_R1_001.fastq.gz  <br />
+HiC_Afraterculus_L002_R2_001.fastq.gz
 
 There should be a common part for all the names of the samples and sample can be uniquily identified by a sample ID (L001 and L002 in above example). This should followed by the read type (R1 and R2) and the rest should be similar.
 
