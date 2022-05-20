@@ -18,7 +18,7 @@ module load StdEnv/2020 nextflow/21.04.3
 To run the pipeline use this code.
 
 ```
-nextflow run main.nf -resume --in_dir 'sorted/' --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta'
+nextflow run pubudumanoj/hic-scaffolding -r main -resume --in_dir 'sorted/' --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta'
 ```
 You need to specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
 
