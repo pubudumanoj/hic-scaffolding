@@ -19,6 +19,9 @@ Workflow Information:
 
 """
 
+// Acknowledgement: Rob Syme
+
+
 workflow {
 
     channel.fromPath(params.REF) | index
