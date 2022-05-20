@@ -11,7 +11,7 @@ git clone https://github.com/pubudumanoj/hic-scaffolding.git
 cd hic-scaffolding
 ```
 
-Next, either download and install [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) or load the NextFlow module installed in the CC file system.
+Next, either download and install [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) `>=21.10.3` or load the NextFlow module installed in the CC file system.
 _e.g_ 
 ```
 module load StdEnv/2020 nextflow/21.04.3
