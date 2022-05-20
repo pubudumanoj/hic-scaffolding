@@ -22,14 +22,14 @@ Then specify the directory path of the Hi-C fastq files in **in_dir** param. Mak
 
 Currently this pipeline only supports for paired end fastq files and you must have both forward and reverse reads in order to use the pipeline. If you have fastq files from multiple samples you can name samples as follows
 
-e.g
-sample 1
-HiC05-01_Afraterculus_RAG1429A1-1_S1_**L001_R1**_001.fastq.gz
-HiC05-01_Afraterculus_RAG1429A1-1_S1_**L001_R2**_001.fastq.gz
+e.g <br />
+**sample 1** <br />
+HiC05-01_Afraterculus_RAG1429A1-1_S1_L001_R1_001.fastq.gz
+HiC05-01_Afraterculus_RAG1429A1-1_S1_L001_R2_001.fastq.gz
 
-sample 2
-HiC05-01_Afraterculus_RAG1429A1-1_S1_**L002_R1**_001.fastq.gz
-HiC05-01_Afraterculus_RAG1429A1-1_S1_**L002_R2**_001.fastq.gz
+**sample 2** <br />
+HiC05-01_Afraterculus_RAG1429A1-1_S1_L002_R1_001.fastq.gz
+HiC05-01_Afraterculus_RAG1429A1-1_S1_L002_R2_001.fastq.gz
 
 There should be a common part for all the names of the samples and sample can be uniquily identified by a sample ID (L002 in above example). This should followed by the read type and the rest should be similar
 
