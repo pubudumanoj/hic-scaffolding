@@ -5,7 +5,7 @@ hid-scaffolding is a pipeline that can be used for `Hi-C scaffolding` with `Arim
 
 ## Installation
 
-### This installation guide will provide instructions to install this pipeline on a Compute Canada (Aliance) cluster
+### This installation guide will provide instructions to install this pipeline on a Compute Canada (Alliance) cluster
 
 First you will need to clone the repo
 ```
@@ -50,7 +50,9 @@ Optionally, you can modifiy each parameter defined in the config file accordingl
 To run the pipeline use this code.
 
 ```
-nextflow run main.nf -resume
+nextflow run pubudumanoj/hic-scaffolding -resume
 ```
 
+#### Acknowledgement
 
+Special thanks to Dr. Rob Syme for continuous support and improvments
