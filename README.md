@@ -33,3 +33,4 @@ HiC05-01_Afraterculus_RAG1429A1-1_S1_L002_R2_001.fastq.gz
 
 There should be a common part for all the names of the samples and sample can be uniquily identified by a sample ID (L001 and L002 in above example). This should followed by the read type (R1 and R2) and the rest should be similar.
 
+Then you should specify the path for the contigs assembly (reference fasta file) using **REF** param in the config file
