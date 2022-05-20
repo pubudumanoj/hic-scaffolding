@@ -54,10 +54,10 @@ workflow {
     // pair_reads.out.verbiage.view()
     add_read_group(channel.of(params.LABEL).first(),  pair_reads.out)
     
-    merge_techincal_replicates(add_read_group.out.toList(), channel.of(params.LABEL).first())
-    // merge_techincal_replicates.out.verbiage.view()
+    merge_technical_replicates(add_read_group.out.toList(), channel.of(params.LABEL).first())
+    // merge_technical_replicates.out.verbiage.view()
 
-    mark_duplicates(merge_techincal_replicates.out, channel.of(params.LABEL).first())
+    mark_duplicates(merge_technical_replicates.out, channel.of(params.LABEL).first())
     // mark_duplicates.out.verbiage.view()
 
     sam_index(mark_duplicates.out)
@@ -70,21 +70,26 @@ workflow {
 
     fasta_faidx_index(channel.fromPath(params.REF))
 
-    salsa2_scaffolding(channel.fromPath(params.REF).first(), fasta_faidx_index.out.first(), sort_bed.out, channel.of(3,5,10))
+    salsa2_scaffolding(channel.fromPath(params.REF).first(), fasta_faidx_index.out.first(), sort_bed.out, channel.fromList(params.iterations))
 
     index_scaffolded_fasta(salsa2_scaffolding.out)
 
     make_chromosome_sizes(index_scaffolded_fasta.out) 
 
+    sorted_iterated_alignment(salsa2_scaffolding.out)
+
+    make_chromosome_sizes.out | join(sorted_iterated_alignment.out) | set {ch_hic}
+
+    creating_hic_file(ch_hic)
+
 
 }
-
-
 
 process align_R1 {
     module 'mugqic/bwa/0.7.17'
     cpus 1
     publishDir "bam_out"
+    label 'align_R1'
 
     input:
     tuple val(sample_id), path(reads)
@@ -106,6 +111,7 @@ process align_R2 {
     module 'mugqic/bwa/0.7.17'
     cpus 1
     publishDir "bam_out"
+    label 'align_R2'
 
     input:
     tuple val(sample_id), path(reads)
@@ -223,7 +229,7 @@ process pair_reads{
     """
 
     INDEX=`find -L ./ -name "*.amb" | sed 's/.amb//'`
-    two_read_bam_combiner.pl ${r1} ${r2} samtools 1 | samtools view -bS -t \$INDEX | samtools sort --threads ${task.cpus} -o ${sample_id}.bam 
+    two_read_bam_combiner.pl ${r1} ${r2} samtools ${params.MAPQ_FILTER} | samtools view -bS -t \$INDEX | samtools sort --threads ${task.cpus} -o ${sample_id}.bam 
     """
 
 }
@@ -247,11 +253,11 @@ process add_read_group{
     mkdir temp
     mkdir paired
     
-    java -Xmx20G -Djava.io.tmpdir=temp/ -jar \$PICARD_HOME/picard.jar AddOrReplaceReadGroups -INPUT ${input} -OUTPUT paired/${input} -ID ${sample_id} -LB ${sample_id} -SM ${LABEL} -PL ILLUMINA -PU none
+    java -Xmx${params.java_memory} -Djava.io.tmpdir=temp/ -jar \$PICARD_HOME/picard.jar AddOrReplaceReadGroups -INPUT ${input} -OUTPUT paired/${input} -ID ${sample_id} -LB ${sample_id} -SM ${LABEL} -PL ILLUMINA -PU none
     """
 }
 
-process merge_techincal_replicates{
+process merge_technical_replicates{
 
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
@@ -264,14 +270,15 @@ process merge_techincal_replicates{
 
     output:
     path("merged/*.bam")
-    //stdout emit: verbiage
+    // stdout emit: verbiage
 
     """
-    echo $input
+
     mkdir temp
     mkdir merged
-    inputs=`printf I=${input} | sed 's\\ \\ I=\\'`
-    java -Xmx20G -Djava.io.tmpdir=temp/ -jar \$PICARD_HOME/picard.jar MergeSamFiles \$inputs OUTPUT=merged/${LABEL}.bam USE_THREADING=TRUE ASSUME_SORTED=TRUE VALIDATION_STRINGENCY=LENIENT
+    inputs=`echo ${input} | sed 's\\ \\ -I \\g'`
+    echo \$inputs
+    java -Xmx${params.java_memory} -Djava.io.tmpdir=temp/ -jar \$PICARD_HOME/picard.jar MergeSamFiles -I \$inputs -OUTPUT merged/${LABEL}.bam -USE_THREADING TRUE -ASSUME_SORTED TRUE -VALIDATION_STRINGENCY LENIENT
     """
 
 }
@@ -284,6 +291,7 @@ process mark_duplicates{
 
     input:
     path input
+    // stdin
     val LABEL
     
 
@@ -295,7 +303,7 @@ process mark_duplicates{
     echo $input
     mkdir temp
     mkdir deduplicated
-    java -Xmx20G -XX:-UseGCOverheadLimit -Djava.io.tmpdir=temp/ -jar \$PICARD_HOME/picard.jar MarkDuplicates INPUT=${input} OUTPUT=deduplicated/${LABEL}.bam METRICS_FILE=deduplicated/metrics.${LABEL}.txt TMP_DIR=temp ASSUME_SORTED=TRUE VALIDATION_STRINGENCY=LENIENT REMOVE_DUPLICATES=TRUE
+    java -Xmx${params.java_memory} -XX:-UseGCOverheadLimit -Djava.io.tmpdir=temp/ -jar \$PICARD_HOME/picard.jar MarkDuplicates INPUT=${input} OUTPUT=deduplicated/${LABEL}.bam METRICS_FILE=deduplicated/metrics.${LABEL}.txt TMP_DIR=temp ASSUME_SORTED=TRUE VALIDATION_STRINGENCY=LENIENT REMOVE_DUPLICATES=TRUE
 
     """
 
@@ -348,6 +356,7 @@ process stats{
 process bam_to_bed{
     
     module 'mugqic/bedtools/2.30.0'
+    cpus 1
 
     input:
     path input
@@ -362,6 +371,8 @@ process bam_to_bed{
 }
 
 process sort_bed{
+
+    cpus 1
 
     input:
     path input
@@ -383,6 +394,7 @@ process fasta_faidx_index {
 
     module 'mugqic/samtools/1.14'
     publishDir "."
+    cpus 1
 
     input:
     path fasta
@@ -398,6 +410,7 @@ process salsa2_scaffolding {
 
     module 'mugqic/python/2.7.14'
     publishDir "scaffolding/iteration_$iteration"
+    cpus 1
 
     input:
     path fasta
@@ -407,11 +420,11 @@ process salsa2_scaffolding {
         
     output:
     // path("scaffolds_i"+ iteration + "/*")
-    tuple path("*"), val("scaffolds_i$iteration")
+    tuple val("scaffolds_i$iteration"), path("*")
 
     """
     mkdir scaffolds_i${iteration}
-    run_pipeline.py -a $fasta -l ${fasta_index} -b ${input_bed} -e GATC,GANTC -o scaffolds_i${iteration} -i $iteration -m yes
+    run_pipeline.py -a $fasta -l ${fasta_index} -b ${input_bed} -e ${params.hic_enzyme} -o scaffolds_i${iteration} -i $iteration -m yes
     """
 
 
@@ -424,12 +437,13 @@ process salsa2_scaffolding {
 process index_scaffolded_fasta {
     
     module 'mugqic/samtools/1.14'
+    cpus 1
 
     input:
-    tuple path(index), val(iteration)
+    tuple val(iteration), path(salsa2_output)
 
     output:
-    tuple path("*/*.fai"), val(iteration)
+    tuple val(iteration), path("*.fai")
     
     """
     FASTA=`find -L ./ -name "*FINAL.fasta"`
@@ -440,19 +454,60 @@ process index_scaffolded_fasta {
 process make_chromosome_sizes {
     
     module 'mugqic/samtools/1.14'
+    cpus 1
 
     input:
-    tuple path(index), val(iteration)
+    tuple val(iteration), path(index)
 
     output:
-    tuple path("chromosome_sizes.tsv"), val(iteration)
-    stdout
+    tuple val(iteration), path("chromosome_sizes.tsv")
+    //stdout
 
     """
     echo $index $iteration
-    cut -f 1,2 $index | head -n 500 > chromosome_sizes.tsv
+    cut -f 1,2 $index | head -n ${params.scaffolding_count} > chromosome_sizes.tsv
 
 
     """
 }
 
+process sorted_iterated_alignment{
+
+    module 'mugqic/python/2.7.14'
+    cpus 1
+
+    input:
+    tuple val(iteration), path(salsa2_output)
+
+    output:
+    tuple val(iteration), path("alignments_sorted.txt")
+    // stdout
+
+    """
+    alignments2txt.py -b $iteration/alignment_iteration_1.bed  -a $iteration/scaffolds_FINAL.agp -l $iteration/scaffold_length_iteration_1 | \\
+    awk -v OFS="\\t" '{if (\$2 > \$6) {print \$1","\$6","\$7","\$8","\$5","\$2","\$3","\$4} else {print }}'  > alignments_sorted.txt
+    """
+
+}
+
+
+process creating_hic_file{
+
+    module 'mugqic/java/openjdk-jdk1.8.0_72'
+    cpus 1
+    memory '2GB'
+    label 'creating_hic_file'
+    publishDir "scaffolding/$iteration"
+
+    input:
+    tuple val(iteration), path(chromosome_sizes), path(alignments_sorted)
+
+    output:
+    tuple val(iteration), path("*.hic")
+    // stdout
+
+    """
+    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j  ${task.cpus} $alignments_sorted ${iteration}/salsa_${iteration}.hic $chromosome_sizes
+    """
+
+}

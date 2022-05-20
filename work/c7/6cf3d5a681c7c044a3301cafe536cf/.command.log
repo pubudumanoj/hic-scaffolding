@@ -1,0 +1,90 @@
+
+Picked up JAVA_TOOL_OPTIONS: -Xmx2g
+INFO	2022-05-18 23:11:15	MergeSamFiles	
+
+********** NOTE: Picard's command line syntax is changing.
+**********
+********** For more information, please see:
+********** https://github.com/broadinstitute/picard/wiki/Command-Line-Syntax-Transition-For-Users-(Pre-Transition)
+**********
+********** The command line looks like this in the new syntax:
+**********
+**********    MergeSamFiles -I  -OUTPUT merged/Afraterculus.bam -USE_THREADING TRUE -ASSUME_SORTED TRUE -VALIDATION_STRINGENCY LENIENT
+**********
+
+
+ERROR: Option 'OUTPUT' is required.
+
+USAGE: MergeSamFiles [options]
+
+Documentation: http://broadinstitute.github.io/picard/command-line-overview.html#MergeSamFiles
+
+Merges multiple SAM/BAM/CRAM (and/or) files into a single file.  This tool is used for combining SAM/BAM/CRAM (and/or)
+files from different runs or read groups into a single file, similarly to the "merge" function of Samtools
+(http://www.htslib.org/doc/samtools.html).  
+
+Note that to prevent errors in downstream processing, it is critical to identify/label read groups appropriately. If
+different samples contain identical read group IDs, this tool will avoid collisions by modifying the read group IDs to
+be unique. For more information about read groups, see the GATK Dictionary entry.
+(https://www.broadinstitute.org/gatk/guide/article?id=6472) 
+
+
+
+Usage example:
+
+java -jar picard.jar MergeSamFiles \
+I=input_1.bam \
+I=input_2.bam \
+O=output_merged_files.bam
+
+
+Version: 2.26.6
+
+
+Options:
+
+--help
+-h                            Displays options specific to this tool.
+
+--stdhelp
+-H                            Displays options specific to this tool AND options common to all Picard command line
+                              tools.
+
+--version                     Displays program version.
+
+INPUT=String
+I=String                      SAM/BAM/CRAM input file  Default value: null. This option must be specified at least 1
+                              times. 
+
+OUTPUT=File
+O=File                        SAM/BAM/CRAM file to write merged result to  Required. 
+
+SORT_ORDER=SortOrder
+SO=SortOrder                  Sort order of output file  Default value: coordinate. This option can be set to 'null' to
+                              clear the default value. Possible values: {unsorted, queryname, coordinate, duplicate,
+                              unknown} 
+
+ASSUME_SORTED=Boolean
+AS=Boolean                    If true, assume that the input files are in the same sort order as the requested output
+                              sort order, even if their headers say otherwise.  Default value: false. This option can be
+                              set to 'null' to clear the default value. Possible values: {true, false} 
+
+MERGE_SEQUENCE_DICTIONARIES=Boolean
+MSD=Boolean                   Merge the sequence dictionaries  Default value: false. This option can be set to 'null' to
+                              clear the default value. Possible values: {true, false} 
+
+USE_THREADING=Boolean         Option to create a background thread to encode, compress and write to disk the output
+                              file. The threaded version uses about 20% more CPU and decreases runtime by ~20% when
+                              writing out a compressed BAM/CRAM file.  Default value: false. This option can be set to
+                              'null' to clear the default value. Possible values: {true, false} 
+
+COMMENT=String
+CO=String                     Comment(s) to include in the merged output file's header.  Default value: null. This
+                              option may be specified 0 or more times. 
+
+INTERVALS=File
+RGN=File                      An interval list file that contains the locations of the positions to merge. Assume sam
+                              are sorted and indexed. The resulting file will contain alignments that may overlap with
+                              genomic regions outside the requested region. Unmapped reads are discarded.  Default
+                              value: null. 
+
