@@ -21,17 +21,6 @@ Workflow Information:
 
 workflow {
 
-    // fastq = channel.fromFilePairs(params.in_dir + params.fastq)
-    // ref = channel.fromPath(params.REF)
-    // prefix= channel.of(params.LABEL+'_1', params.LABEL+'_2')
-
-
-    // dir_names = channel.fromPath([params.RAW_DIR, params.RAW_DIR, params.PAIR_DIR, params.REP_DIR, params.MERGE_DIR])
-    // make_dirs(dir_names)
-    // index(prefix.combine(ref))
-    // align(fastq, prefix.combine(channel.fromPath(params.RAW_DIR)))
-    // align.out.verbiage.view()
-
     channel.fromPath(params.REF) | index
     ch_raw_fastq = channel.fromFilePairs( params.in_dir + params.fastq )  // [ id, [fwd, rev] ]
     align_R1 ( ch_raw_fastq, index.out.first() )  // | view\\
@@ -41,7 +30,6 @@ workflow {
     filter_R1(align_R1.out)
     // filter_R2.out.verbiage.view()
 
-    // Rob's Edits Start
     filter_R1.out
     | join(filter_R2.out) // Joins two channels that share a common first element in the tuple
     | set { ch_pairs }
@@ -49,8 +37,7 @@ workflow {
     pair_reads( ch_pairs, index.out.first() )
 
     // This gives a channel with form [id, read1, read2]
-    // Rob's Edits End
-   // pair_reads(filter_R1.out, filter_R2.out, index.out.first())
+    // pair_reads(filter_R1.out, filter_R2.out, index.out.first())
     // pair_reads.out.verbiage.view()
     add_read_group(channel.of(params.LABEL).first(),  pair_reads.out)
     
@@ -133,6 +120,8 @@ process filter_R1 {
     module 'mugqic/samtools/1.14'
     cpus 1
     publishDir "."
+    label 'filter'
+
 
     input:
     tuple val(sample_id), path(input)
@@ -158,6 +147,7 @@ process filter_R2 {
     module 'mugqic/samtools/1.14'
     cpus 1
     publishDir "."
+    label 'filter'
 
     input:
     tuple val(sample_id), path(input)
@@ -174,23 +164,6 @@ process filter_R2 {
     samtools view -h $input | filter_five_end.pl | samtools view --threads ${task.cpus} -Sb --output filtered/${sample_id}_R2.bam 
     """
 }
-
-process make_dirs{
-
-input:
-    path dir_names
-
-output:
-    path "${dir_names}"
-
-script:
-"""
-    mkdir -p $projectDir/${dir_names} \
-
-"""
-
-}
-
 
 process index {
     module 'mugqic/bwa/0.7.17'
@@ -411,6 +384,7 @@ process salsa2_scaffolding {
     module 'mugqic/python/2.7.14'
     publishDir "scaffolding/iteration_$iteration"
     cpus 1
+    label 'salsa2_scaffolding'
 
     input:
     path fasta
