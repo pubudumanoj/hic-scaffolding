@@ -27,8 +27,9 @@ Currently this pipeline only supports for paired end fastq files and you must ha
 
 _e.g_ <br />
 **sample 1** <br />
-HiC_Afraterculus_L001_R1_001.fastq.gz  <br />
+``` HiC_Afraterculus_L001_R1_001.fastq.gz  <br />
 HiC_Afraterculus_L001_R2_001.fastq.gz
+```
 
 **sample 2** <br />
 HiC_Afraterculus_L002_R1_001.fastq.gz  <br />
