@@ -1,5 +1,5 @@
 # hic-scaffolding
-This repo contains the scripts that can be used for Hi-C scaffolding with Arima Genomics Hi-C libraries. The pipeline uses SALSA2 for the scaffolding
+This repo contains the scripts that can be used for `Hi-C scaffolding` with `Arima Genomics` Hi-C libraries. The pipeline uses [SALSA2](https://github.com/marbl/SALSA) for the scaffolding
 
 ## Installation
 
@@ -19,7 +19,7 @@ module load StdEnv/2020 nextflow/21.04.3
 
 ## Usage
 
-After installing, specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the **in_dir** param. Make sure to add a "/" at the end of the path.
+After installing, specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
 
 #### How to name the fastq files
 
@@ -34,7 +34,7 @@ _e.g_ <br />
 HiC_Afraterculus_L002_R1_001.fastq.gz  <br />
 HiC_Afraterculus_L002_R2_001.fastq.gz
 
-There should be a common part for all the names of the samples and sample can be uniquily identified by a sample ID (L001 and L002 in above example). This should followed by the read type (R1 and R2) and the rest should be similar.
+There should be a common part for all the names of the samples and sample can be uniquily identified by a sample ID (`L001 and L002` in above example). This should followed by the read type `(R1 and R2)` and the rest should be similar.
 
 After correctly formatting fastq file names you should change the **fastq** param accordingly to match the below REGEX pattern <br />
 '*R{1,2}_001.fastq.gz'
