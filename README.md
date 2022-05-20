@@ -50,7 +50,7 @@ Optionally, you can modifiy each parameter defined in the config file accordingl
 To run the pipeline use this code.
 
 ```
-nextflow run main2.nf -resume
+nextflow run main.nf -resume
 ```
 
 
