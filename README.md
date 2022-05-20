@@ -7,13 +7,7 @@ hid-scaffolding is a pipeline that can be used for `Hi-C scaffolding` with `Arim
 
 ### This installation guide will provide instructions to install this pipeline on a Compute Canada (Alliance) cluster
 
-First you will need to clone the repo
-```
-git clone https://github.com/pubudumanoj/hic-scaffolding.git
-cd hic-scaffolding
-```
-
-Next, either download and install [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) `>=21.10.3` or load the NextFlow module installed in the CC file system.
+First either download and install [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) `>=21.10.3` or load the NextFlow module installed in the CC file system.
 _e.g_ 
 ```
 module load StdEnv/2020 nextflow/21.04.3
@@ -21,7 +15,12 @@ module load StdEnv/2020 nextflow/21.04.3
 
 ## Usage
 
-After installing, specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
+To run the pipeline use this code.
+
+```
+nextflow run main.nf -resume --in_dir 'sorted/' --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta'
+```
+You need to specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
 
 #### How to name the fastq files
 
@@ -41,18 +40,11 @@ There should be a common part for all the names of the samples and sample can be
 After correctly formatting fastq file names you should change the `fastq` param accordingly to match the below REGEX pattern <br />
 `'*R{1,2}_001.fastq.gz'`
 
-Then you should specify the path for the contigs assembly (reference fasta file) using `REF` param in the config file. Also make sure to clean the scaffold names in the fasta file. If you use simpler form, the output files will be smaller in size and easy to process.
+Then you should specify the path for the contigs assembly (reference fasta file) using `REF` param. Also make sure to clean the scaffold names in the fasta file. If you use simpler form, the output files will be smaller in size and easy to process.
 e.g
 `>scaffold_1`
 
-Optionally, you can modifiy each parameter defined in the config file accordingly.
-
-To run the pipeline use this code.
-
-```
-nextflow run main.nf -resume
-```
-
+Optionally, you can modifiy each parameter defined in the config file accordingly. In order to do this you can either create a `nextflow.config`file in the working directory or add them as arguments to `nextflow run`
 #### Acknowledgement
 
 Special thanks to Dr. Rob Syme for continuous support and improvments
