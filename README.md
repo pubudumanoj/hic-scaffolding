@@ -41,7 +41,7 @@ There should be a common part for all the names of the samples and sample can be
 After correctly formatting fastq file names you should change the `fastq` param accordingly to match the below REGEX pattern <br />
 `'*R{1,2}_001.fastq.gz'`
 
-Then you should specify the path for the contigs assembly (reference fasta file) using `REF` param in the config file. Also make sure to clean the scaffold names in the fasta file. If you use simpler form the output files will be smaller in size and easy to process.
+Then you should specify the path for the contigs assembly (reference fasta file) using `REF` param in the config file. Also make sure to clean the scaffold names in the fasta file. If you use simpler form, the output files will be smaller in size and easy to process.
 e.g
 `>scaffold_1`
 
