@@ -37,7 +37,7 @@ _e.g_ <br />
 
 There should be a common part for all the names of the samples and sample can be uniquily identified by a sample ID (`L001 and L002` in above example). This should followed by the read type `(R1 and R2)` and the rest should be similar.
 
-After correctly formatting fastq file names you should change the `fastq` param accordingly to match the below REGEX pattern <br />
+After correctly formatting fastq file names you should change the `fastq` param accordingly to match the below glob pattern <br />
 `'*R{1,2}_001.fastq.gz'`
 
 Then you should specify the path for the contigs assembly (reference fasta file) using `REF` param. Also make sure to clean the scaffold names in the fasta file. If you use simpler form, the output files will be smaller in size and easy to process.
