@@ -171,6 +171,7 @@ process filter_R2 {
 process index {
     module 'mugqic/bwa/0.7.17'
     // publishDir "out"
+    label 'index'
 
     input:
     path(REF)
@@ -186,6 +187,7 @@ process pair_reads{
     module 'mugqic/samtools/1.14'
     cpus 1
     publishDir "."
+    label 'pair_reads'
 
     input:
     // tuple val(sample_id_R1), path(input1)
@@ -215,6 +217,7 @@ process add_read_group{
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
     publishDir "."
+    label 'add_read_group'
 
     input:
     val LABEL
@@ -238,6 +241,7 @@ process merge_technical_replicates{
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
     publishDir "."
+    label 'merge_technical_replicates'
 
     input:
     path input
@@ -264,6 +268,7 @@ process mark_duplicates{
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
     publishDir "."
+    label 'mark_duplicates'
 
     input:
     path input
@@ -290,6 +295,7 @@ process sam_index{
     module 'mugqic/samtools/1.14'
     cpus 1
     publishDir "."
+    label 'sam_index'
 
     input:
     path input
@@ -310,6 +316,7 @@ process stats{
 
     cpus 1
     publishDir "."
+    label 'stats'
 
     input:
     path input
@@ -333,6 +340,7 @@ process bam_to_bed{
     
     module 'mugqic/bedtools/2.30.0'
     cpus 1
+    label 'bam_to_bed'
 
     input:
     path input
@@ -349,6 +357,7 @@ process bam_to_bed{
 process sort_bed{
 
     cpus 1
+    label 'sort_bed'
 
     input:
     path input
@@ -415,6 +424,7 @@ process index_scaffolded_fasta {
     
     module 'mugqic/samtools/1.14'
     cpus 1
+    label 'index_scaffolded_fasta'
 
     input:
     tuple val(iteration), path(salsa2_output)
@@ -432,6 +442,7 @@ process make_chromosome_sizes {
     
     module 'mugqic/samtools/1.14'
     cpus 1
+    label 'make_chromosome_sizes'
 
     input:
     tuple val(iteration), path(index)
@@ -452,6 +463,7 @@ process sorted_iterated_alignment{
 
     module 'mugqic/python/2.7.14'
     cpus 1
+    label 'sorted_iterated_alignment'
 
     input:
     tuple val(iteration), path(salsa2_output)
