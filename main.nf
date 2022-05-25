@@ -370,7 +370,7 @@ process sort_bed{
     temp=$input
     bamfile=\${temp%.*}
     echo \$bamfile
-    sort -k 4 $input -S 2G > \$bamfile.sort.bed
+    sort -k 4 $input -S ${params.java_memory}G > \$bamfile.sort.bed
     
     """
 }
