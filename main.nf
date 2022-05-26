@@ -496,7 +496,8 @@ process creating_hic_file{
     // stdout
 
     """
-    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j  ${task.cpus} $alignments_sorted ${iteration}/salsa_${iteration}.hic $chromosome_sizes
+    mkdir ${iteration}
+    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j ${task.cpus} $alignments_sorted ${iteration}/salsa_${iteration}.hic $chromosome_sizes
     """
 
 }
