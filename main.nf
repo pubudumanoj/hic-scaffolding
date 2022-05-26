@@ -473,7 +473,7 @@ process sorted_iterated_alignment{
     // stdout
 
     """
-    alignments2txt.py -b $iteration/alignment_iteration_1.bed  -a $iteration/scaffolds_FINAL.agp -l $iteration/scaffold_length_iteration_1 | \\
+    alignments2txt.py -b ${iteration}/alignment_iteration_1.bed  -a ${iteration}/scaffolds_FINAL.agp -l ${iteration}/scaffold_length_iteration_1 | \\
     awk -v OFS="\\t" '{if (\$2 > \$6) {print \$1","\$6","\$7","\$8","\$5","\$2","\$3","\$4} else {print }}'  > alignments_sorted.txt
     """
 
@@ -486,7 +486,7 @@ process creating_hic_file{
     cpus 1
     memory '2GB'
     label 'creating_hic_file'
-    publishDir "scaffolding/$iteration"
+    // publishDir "scaffolding/$iteration"
 
     input:
     tuple val(iteration), path(chromosome_sizes), path(alignments_sorted)
@@ -498,7 +498,7 @@ process creating_hic_file{
     """
     unset JAVA_TOOL_OPTIONS
     mkdir ${iteration}
-    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j ${task.cpus} $alignments_sorted ${iteration}/salsa_${iteration}.hic $chromosome_sizes
+    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j ${task.cpus} ${alignments_sorted} ${iteration}/salsa_${iteration}.hic ${chromosome_sizes}
     """
 
 }
