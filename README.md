@@ -1,4 +1,4 @@
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.10.3-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.04.3-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
 
 # hic-scaffolding
 hid-scaffolding is a pipeline that can be used for `Hi-C scaffolding` with `Arima Genomics` Hi-C libraries. The pipeline uses [SALSA2](https://github.com/marbl/SALSA) for the scaffolding and it is currently designed for [Compute Canada Architecture](https://status.computecanada.ca/)
@@ -7,7 +7,7 @@ hid-scaffolding is a pipeline that can be used for `Hi-C scaffolding` with `Arim
 
 ### This installation guide will provide instructions to install this pipeline on a Compute Canada (Alliance) cluster
 
-First either download and install [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) `>=21.10.3` or load the NextFlow module installed in the CC file system.
+First either download and install [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) `>=21.04.3` or load the NextFlow module installed in the CC file system.
 _e.g_ 
 ```
 module load StdEnv/2020 nextflow/21.04.3
