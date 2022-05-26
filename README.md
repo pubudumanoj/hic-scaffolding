@@ -70,6 +70,13 @@ e.g
 `>scaffold_1`
 
 Optionally, you can modifiy each parameter defined in the config file accordingly. In order to do this you can either create a `nextflow.config`file in the working directory or add them as arguments to `nextflow run`
+
+You can run the pipeline in your local machine, Compute Canada cluster (Narval, Beluga, Cedar and Graham are supported) or McGill University Genome Center cluster Abacus
+You can use `-profile local` or nothing to run in the local machine
+To run in Compute Canada cluster use -profile cc_hpc
+To run in Abacus use `-profile abacus`
+
+
 #### Acknowledgement
 
 Special thanks to Dr. [Rob Syme](https://github.com/robsyme) for continuous support and improvments
