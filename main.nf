@@ -70,7 +70,7 @@ workflow {
 
     make_chromosome_sizes.out | join(sorted_iterated_alignment.out) | set {ch_hic}
 
-    // creating_hic_file(ch_hic)
+    creating_hic_file(ch_hic)
 
     simlink_scaffold_fasta(salsa2_scaffolding.out)
     // simlink_scaffold_fasta.out | view
