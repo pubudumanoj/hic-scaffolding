@@ -43,7 +43,7 @@ If everythin is okay you will not have any error
 To run the pipeline use this code.
 
 ```
-nextflow run pubudumanoj/hic-scaffolding -r 1.0.0 -resume --in_dir 'sorted/' -latest --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta' -profile cc_hpc
+nextflow run pubudumanoj/hic-scaffolding -r main -resume --in_dir 'sorted/' -latest --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta' -profile cc_hpc
 ```
 You need to specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
 
