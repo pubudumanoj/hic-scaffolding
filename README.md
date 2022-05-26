@@ -73,7 +73,7 @@ Optionally, you can modifiy each parameter defined in the config file accordingl
 
 ### Running the pipeline in different infrastructures
 
-You can run the pipeline in your local machine, Compute Canada cluster (Narval, Beluga, Cedar and Graham are supported) or McGill University Genome Center cluster Abacus
+You can run the pipeline either in your local machine, Compute Canada cluster (Narval, Beluga, Cedar and Graham are supported) or McGill University Genome Center cluster Abacus
 You can use `-profile local` or nothing to run in the local machine
 
 To run in Compute Canada cluster use `-profile cc_hpc`
