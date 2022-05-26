@@ -474,7 +474,7 @@ process sorted_iterated_alignment{
 
     """
     alignments2txt.py -b ${iteration}/alignment_iteration_1.bed  -a ${iteration}/scaffolds_FINAL.agp -l ${iteration}/scaffold_length_iteration_1 | \\
-    awk 'BEGIN {OFS = "\t"} \$2>\$6 {print \$1, \$6, \$7, \$8, \$2, \$3, \$4} \$2<=\$6' | sort -k2,2d -k6,6d --parallel=${task.cpus} > alignments_sorted.txt
+    awk -v OFS="\\t" '{if (\$2 > \$6) {print \$1,\$6,\$7,\$8,\$5,\$2,\$3,\$4} else {print \$0}}' | sort -k2,2d -k6,6d --parallel=${task.cpus} | awk 'NF' > alignments_sorted.txt
     """
 
 }
