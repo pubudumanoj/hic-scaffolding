@@ -70,7 +70,12 @@ workflow {
 
     make_chromosome_sizes.out | join(sorted_iterated_alignment.out) | set {ch_hic}
 
-    creating_hic_file(ch_hic)
+    // creating_hic_file(ch_hic)
+
+    simlink_scaffold_fasta(salsa2_scaffolding.out)
+    // simlink_scaffold_fasta.out | view
+
+    quast(simlink_scaffold_fasta.out.toList(), channel.fromPath(params.REF))
 
 
 }
@@ -171,6 +176,7 @@ process filter_R2 {
 process index {
     module 'mugqic/bwa/0.7.17'
     // publishDir "out"
+    label 'index'
 
     input:
     path(REF)
@@ -186,6 +192,7 @@ process pair_reads{
     module 'mugqic/samtools/1.14'
     cpus 1
     publishDir "."
+    label 'pair_reads'
 
     input:
     // tuple val(sample_id_R1), path(input1)
@@ -215,6 +222,7 @@ process add_read_group{
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
     publishDir "."
+    label 'add_read_group'
 
     input:
     val LABEL
@@ -238,6 +246,7 @@ process merge_technical_replicates{
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
     publishDir "."
+    label 'merge_technical_replicates'
 
     input:
     path input
@@ -264,6 +273,7 @@ process mark_duplicates{
     module 'mugqic/java/openjdk-jdk1.8.0_72:mugqic/picard/2.26.6'
     cpus 1
     publishDir "."
+    label 'mark_duplicates'
 
     input:
     path input
@@ -290,6 +300,7 @@ process sam_index{
     module 'mugqic/samtools/1.14'
     cpus 1
     publishDir "."
+    label 'sam_index'
 
     input:
     path input
@@ -310,6 +321,7 @@ process stats{
 
     cpus 1
     publishDir "."
+    label 'stats'
 
     input:
     path input
@@ -333,6 +345,7 @@ process bam_to_bed{
     
     module 'mugqic/bedtools/2.30.0'
     cpus 1
+    label 'bam_to_bed'
 
     input:
     path input
@@ -349,6 +362,7 @@ process bam_to_bed{
 process sort_bed{
 
     cpus 1
+    label 'sort_bed'
 
     input:
     path input
@@ -361,7 +375,7 @@ process sort_bed{
     temp=$input
     bamfile=\${temp%.*}
     echo \$bamfile
-    sort -k 4 $input -S 2G > \$bamfile.sort.bed
+    sort -k 4 $input -S ${params.java_memory} > \$bamfile.sort.bed
     
     """
 }
@@ -415,6 +429,7 @@ process index_scaffolded_fasta {
     
     module 'mugqic/samtools/1.14'
     cpus 1
+    label 'index_scaffolded_fasta'
 
     input:
     tuple val(iteration), path(salsa2_output)
@@ -424,7 +439,7 @@ process index_scaffolded_fasta {
     
     """
     FASTA=`find -L ./ -name "*FINAL.fasta"`
-    samtools faidx $iteration/scaffolds_FINAL.fasta -o scaffolds_FINAL.fasta.fai
+    samtools faidx ${iteration}/scaffolds_FINAL.fasta -o scaffolds_FINAL.fasta.fai
     """
 }
 
@@ -432,6 +447,7 @@ process make_chromosome_sizes {
     
     module 'mugqic/samtools/1.14'
     cpus 1
+    label 'make_chromosome_sizes'
 
     input:
     tuple val(iteration), path(index)
@@ -451,7 +467,8 @@ process make_chromosome_sizes {
 process sorted_iterated_alignment{
 
     module 'mugqic/python/2.7.14'
-    cpus 1
+    cpus 4
+    label 'sorted_iterated_alignment'
 
     input:
     tuple val(iteration), path(salsa2_output)
@@ -461,8 +478,8 @@ process sorted_iterated_alignment{
     // stdout
 
     """
-    alignments2txt.py -b $iteration/alignment_iteration_1.bed  -a $iteration/scaffolds_FINAL.agp -l $iteration/scaffold_length_iteration_1 | \\
-    awk -v OFS="\\t" '{if (\$2 > \$6) {print \$1","\$6","\$7","\$8","\$5","\$2","\$3","\$4} else {print }}'  > alignments_sorted.txt
+    alignments2txt.py -b ${iteration}/alignment_iteration_1.bed  -a ${iteration}/scaffolds_FINAL.agp -l ${iteration}/scaffold_length_iteration_1 | \\
+    awk -v OFS="\\t" '{if (\$2 > \$6) {print \$1,\$6,\$7,\$8,\$5,\$2,\$3,\$4} else {print \$0}}' | sort -k2,2d -k6,6d --parallel=${task.cpus} | awk 'NF' > alignments_sorted.txt
     """
 
 }
@@ -484,7 +501,53 @@ process creating_hic_file{
     // stdout
 
     """
-    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j  ${task.cpus} $alignments_sorted ${iteration}/salsa_${iteration}.hic $chromosome_sizes
+    unset JAVA_TOOL_OPTIONS
+    mkdir ${iteration}
+    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j ${task.cpus} ${alignments_sorted} ${iteration}/salsa_${iteration}.hic ${chromosome_sizes}
     """
 
+}
+
+process simlink_scaffold_fasta {
+
+    cpus 1
+    memory '2GB'
+    label 'quast'
+    // publishDir "scaffolding/$iteration"
+
+    input:
+    tuple val(iteration), path(salsa2_output)
+
+    output:
+    
+    path("*.fasta")
+
+    """
+    ln -s ${iteration}/scaffolds_FINAL.fasta ${params.LABEL}_${iteration}.fasta
+    """
+
+}
+
+
+process quast {
+    //module 'python/3.6:StdEnv/2020:gcc/9.3.0:quast/5.0.2'
+    //module 'mugqic/Quast/5.0.2'
+    cpus 1
+    memory '2GB'
+    label 'quast'
+    publishDir "."
+
+    input:
+    path (input)
+    path pre_fasta
+
+    output:
+    path "quast_report/*"
+
+    """
+    module purge
+    module load python/3.6 StdEnv/2020 gcc/9.3.0 quast/5.0.2
+    quast *.fasta -o quast_report
+    echo "Done"
+    """
 }
