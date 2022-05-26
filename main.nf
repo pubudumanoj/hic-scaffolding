@@ -70,7 +70,12 @@ workflow {
 
     make_chromosome_sizes.out | join(sorted_iterated_alignment.out) | set {ch_hic}
 
-    creating_hic_file(ch_hic)
+    // creating_hic_file(ch_hic)
+
+    simlink_scaffold_fasta(salsa2_scaffolding.out)
+    // simlink_scaffold_fasta.out | view
+
+    quast(simlink_scaffold_fasta.out.toList(), channel.fromPath(params.REF))
 
 
 }
@@ -486,7 +491,7 @@ process creating_hic_file{
     cpus 1
     memory '2GB'
     label 'creating_hic_file'
-    // publishDir "scaffolding/$iteration"
+    publishDir "scaffolding/$iteration"
 
     input:
     tuple val(iteration), path(chromosome_sizes), path(alignments_sorted)
@@ -501,4 +506,48 @@ process creating_hic_file{
     java -Xmx${params.java_memory} -jar ${params.juicer} pre -j ${task.cpus} ${alignments_sorted} ${iteration}/salsa_${iteration}.hic ${chromosome_sizes}
     """
 
+}
+
+process simlink_scaffold_fasta {
+
+    cpus 1
+    memory '2GB'
+    label 'quast'
+    // publishDir "scaffolding/$iteration"
+
+    input:
+    tuple val(iteration), path(salsa2_output)
+
+    output:
+    
+    path("*.fasta")
+
+    """
+    ln -s ${iteration}/scaffolds_FINAL.fasta ${params.LABEL}_${iteration}.fasta
+    """
+
+}
+
+
+process quast {
+    //module 'python/3.6:StdEnv/2020:gcc/9.3.0:quast/5.0.2'
+    //module 'mugqic/Quast/5.0.2'
+    cpus 1
+    memory '2GB'
+    label 'quast'
+    publishDir "."
+
+    input:
+    path (input)
+    path pre_fasta
+
+    output:
+    path "quast_report/*"
+
+    """
+    module purge
+    module load python/3.6 StdEnv/2020 gcc/9.3.0 quast/5.0.2
+    quast *.fasta -o quast_report
+    echo "Done"
+    """
 }
