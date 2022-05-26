@@ -72,4 +72,4 @@ e.g
 Optionally, you can modifiy each parameter defined in the config file accordingly. In order to do this you can either create a `nextflow.config`file in the working directory or add them as arguments to `nextflow run`
 #### Acknowledgement
 
-Special thanks to Dr. `[Rob Syme]`(https://github.com/robsyme) for continuous support and improvments
+Special thanks to Dr. `[Rob Syme](https://github.com/robsyme)` for continuous support and improvments
