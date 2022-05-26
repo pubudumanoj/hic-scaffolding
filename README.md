@@ -13,7 +13,12 @@ _e.g_
 module load StdEnv/2020 nextflow/21.04.3
 ```
 
-To load mugqic module you may need to add below lines of codes to your `~.bash_profile`
+To load mugqic module you may need to add below lines of codes to your `~/.bash_profile`
+
+open ~/.bash_profile using favourite text editor
+e.g vi ~/.bash_profile
+
+add below lines of codes
 ```
 umask 0002
  
@@ -21,6 +26,17 @@ umask 0002
 export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6
 module use $MUGQIC_INSTALL_HOME/modulefiles
 ```
+save and close the file
+
+then enter the following code
+
+```
+source ~/.bash_profile
+```
+now try to load a muqic module
+`module load mugqic/python/3.8.5`
+
+If everythin is okay you will not have any error
 
 ## Usage
 
