@@ -40,11 +40,17 @@ If everythin is okay you will not have any error
 
 ## Usage
 
+Usually Nextflow requires an active terminal until it finishes all the steps in the pipeline. Therefore you should use a terminal multiplexer like [tmux](https://github.com/tmux/tmux/wiki)
+
+First open a tmux session typing `tmux` or you may type `tmux -a` to use an already active tmux session. This way, you can view the outputs in the console. Then goto the working directory
+
 To run the pipeline use this code.
 
 ```
 nextflow run pubudumanoj/hic-scaffolding -r main -resume --in_dir 'sorted/' -latest --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta' -profile cc_hpc
 ```
+However, if you wish to run the pipeline in the background, use `-bg` option with the above line of code
+
 You need to specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
 
 #### How to name the fastq files
@@ -79,7 +85,6 @@ You can use `-profile local` or nothing to run in the local machine
 To run in Compute Canada cluster use `-profile cc_hpc`
 
 To run in Abacus use `-profile abacus` (However, the quast step is not tested in Abacus and may fail)
-
 
 #### Acknowledgement
 
