@@ -13,12 +13,21 @@ _e.g_
 module load StdEnv/2020 nextflow/21.04.3
 ```
 
+To load mugqic module you may need to add below lines of codes to your `~.bash_profile`
+```
+umask 0002
+ 
+## GenPipes/MUGQIC genomes and modules
+export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6
+module use $MUGQIC_INSTALL_HOME/modulefiles
+```
+
 ## Usage
 
 To run the pipeline use this code.
 
 ```
-nextflow run pubudumanoj/hic-scaffolding -r main -resume --in_dir 'sorted/' --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta'
+nextflow run pubudumanoj/hic-scaffolding -r dev -resume --in_dir 'sorted/' --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta' -profile cc_hpc
 ```
 You need to specify the directory path of the Hi-C fastq files that you want to use for the scaffolding process in the `in_dir` param. Make sure to add a "/" at the end of the path.
 
@@ -47,4 +56,4 @@ e.g
 Optionally, you can modifiy each parameter defined in the config file accordingly. In order to do this you can either create a `nextflow.config`file in the working directory or add them as arguments to `nextflow run`
 #### Acknowledgement
 
-Special thanks to Dr. Rob Syme for continuous support and improvments
+Special thanks to Dr. `[Rob Syme]`(https://github.com/robsyme) for continuous support and improvments
