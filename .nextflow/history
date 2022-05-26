@@ -1,2 +1,0 @@
-2022-05-18 23:10:26	50.3s	wise_darwin	ERR	9ec753ef7d86fea46fe45085225b8023	7b9b2947-2170-443f-8246-b59a941e9fab	nextflow run main2.nf --in_dir ../sorted/ resume
-2022-05-20 13:26:51	6.3s	agitated_ardinghelli	ERR	bae9b40dab25a30bcdd36527781f436d7ef1af5b	7b9b2947-2170-443f-8246-b59a941e9fab	nextflow run pubudumanoj/hic-scaffolding -resume -r 0.1.0
