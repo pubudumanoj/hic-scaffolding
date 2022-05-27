@@ -125,7 +125,7 @@ process align_R2 {
 }
 
 process filter_R1 {
-    module 'mugqic/samtools/1.14'
+    module 'mugqic/samtools/1.14:mugqic/perl/5.34.0'
     cpus 1
     publishDir "."
     label 'filter'
@@ -152,7 +152,7 @@ process filter_R1 {
 
 
 process filter_R2 {
-    module 'mugqic/samtools/1.14'
+    module 'mugqic/samtools/1.14:mugqic/perl/5.34.0'
     cpus 1
     publishDir "."
     label 'filter'
@@ -189,7 +189,7 @@ process index {
 
 process pair_reads{
 
-    module 'mugqic/samtools/1.14'
+    module 'mugqic/samtools/1.14:mugqic/perl/5.34.0'
     cpus 1
     publishDir "."
     label 'pair_reads'
@@ -319,6 +319,7 @@ process sam_index{
 
 process stats{
 
+    module 'mugqic/perl/5.34.0'
     cpus 1
     publishDir "."
     label 'stats'

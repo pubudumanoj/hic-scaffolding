@@ -44,10 +44,17 @@ Usually Nextflow requires an active terminal until it finishes all the steps in 
 
 First open a tmux session typing `tmux` or you may type `tmux -a` to use an already active tmux session. This way, you can view the outputs in the console. Then goto the working directory
 
+Then you may need to add your `RAP-ID` by creating a new config file. Create a file named `custom.config` (you can use any name you prefer) and add the below lines of codes and add your `RAP-ID`
+```
+process {
+  clusterOptions = '--account=YOUR-RAP-ID'
+}
+```
+
 To run the pipeline use this code.
 
 ```
-nextflow run pubudumanoj/hic-scaffolding -r main -resume --in_dir 'sorted/' -latest --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta' -profile cc_hpc
+nextflow run pubudumanoj/hic-scaffolding -r main -resume --in_dir 'sorted/' -latest --fastq '*R{1,2}_001.fastq.gz' --REF '*.fasta' -profile cc_hpc -c custom.config
 ```
 However, if you wish to run the pipeline in the background, use `-bg` option with the above line of code
 
