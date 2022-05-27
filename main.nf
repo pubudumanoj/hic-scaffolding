@@ -81,7 +81,7 @@ workflow {
 }
 
 process align_R1 {
-    module 'mugqic/bwa/0.7.17'
+    module 'mugqic/bwa/0.7.17:mugqic/samtools/1.14'
     cpus 1
     publishDir "bam_out"
     label 'align_R1'
@@ -103,7 +103,7 @@ process align_R1 {
 }
 
 process align_R2 {
-    module 'mugqic/bwa/0.7.17'
+    module 'mugqic/bwa/0.7.17:mugqic/samtools/1.14'
     cpus 1
     publishDir "bam_out"
     label 'align_R2'
