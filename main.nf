@@ -504,7 +504,7 @@ process creating_hic_file{
     """
     unset JAVA_TOOL_OPTIONS
     mkdir ${iteration}
-    java -Xmx${params.java_memory} -jar ${params.juicer} pre -j ${task.cpus} ${alignments_sorted} ${iteration}/salsa_${iteration}.hic ${chromosome_sizes}
+    java -Xmx${params.java_memory} -jar ${params.juicer} pre -n -j ${task.cpus} ${alignments_sorted} salsa_${iteration}.hic ${chromosome_sizes}
     """
 
 }
