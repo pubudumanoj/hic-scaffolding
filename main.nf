@@ -64,12 +64,15 @@ workflow {
 
     index_scaffolded_fasta(salsa2_scaffolding.out)
 
-    make_chromosome_sizes(index_scaffolded_fasta.out) 
+    index_scaffolded_fasta.out | combine(channel.fromList(params.scaffolding_count)) | set{ch_make_chr}
+    // make_chromosome_sizes(index_scaffolded_fasta.out, channel.fromList(params.scaffolding_count)) 
+     make_chromosome_sizes(ch_make_chr) 
 
     sorted_iterated_alignment(salsa2_scaffolding.out)
 
-    make_chromosome_sizes.out | join(sorted_iterated_alignment.out) | set {ch_hic}
 
+    make_chromosome_sizes.out | combine(sorted_iterated_alignment.out, by:0) | set {ch_hic}
+    // ch_hic.view()
     creating_hic_file(ch_hic)
 
     simlink_scaffold_fasta(salsa2_scaffolding.out)
@@ -400,7 +403,7 @@ process fasta_faidx_index {
 process salsa2_scaffolding {
 
     module 'mugqic/python/2.7.14'
-    publishDir "scaffolding/iteration_$iteration"
+    publishDir "scaffolding/scaffolds_i$iteration"
     cpus 1
     label 'salsa2_scaffolding'
 
@@ -451,15 +454,16 @@ process make_chromosome_sizes {
     label 'make_chromosome_sizes'
 
     input:
-    tuple val(iteration), path(index)
+    tuple val(iteration), path(index), val (scaffolding_count)
+    
 
     output:
-    tuple val(iteration), path("chromosome_sizes.tsv")
+    tuple val(iteration), path("chromosome_sizes.tsv"), val (scaffolding_count)
     //stdout
 
     """
     echo $index $iteration
-    cut -f 1,2 $index | head -n ${params.scaffolding_count} > chromosome_sizes.tsv
+    cut -f 1,2 $index | head -n ${scaffolding_count} > chromosome_sizes.tsv
 
 
     """
@@ -492,10 +496,10 @@ process creating_hic_file{
     cpus 1
     memory '2GB'
     label 'creating_hic_file'
-    publishDir "scaffolding/$iteration"
+    publishDir "scaffolding/$iteration/"
 
     input:
-    tuple val(iteration), path(chromosome_sizes), path(alignments_sorted)
+    tuple val(iteration), path(chromosome_sizes), val(scaffolding_count), path(alignments_sorted)
 
     output:
     tuple val(iteration), path("*.hic")
@@ -503,8 +507,7 @@ process creating_hic_file{
 
     """
     unset JAVA_TOOL_OPTIONS
-    mkdir ${iteration}
-    java -Xmx${params.java_memory} -jar ${params.juicer} pre -n -j ${task.cpus} ${alignments_sorted} salsa_${iteration}.hic ${chromosome_sizes}
+    java -Xmx${params.java_memory} -jar ${params.juicer} pre -n -j ${task.cpus} ${alignments_sorted} salsa_${iteration}_${scaffolding_count}.hic ${chromosome_sizes}
     """
 
 }
