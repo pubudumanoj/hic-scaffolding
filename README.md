@@ -96,3 +96,4 @@ To run in Abacus use `-profile abacus` (However, the quast step is not tested in
 #### Acknowledgement
 
 Special thanks to Dr. [Rob Syme](https://github.com/robsyme) for continuous support and improvments
+Authors of the Tools used
